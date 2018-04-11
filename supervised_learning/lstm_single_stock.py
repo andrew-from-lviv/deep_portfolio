@@ -89,9 +89,9 @@ def make_network(look_back, batch_size):
     net = tfl.fully_connected(net, 1, activation='linear', name='Linear')
     net = tfl.regression(net, batch_size=batch_size, optimizer='adam', learning_rate=0.005, loss='mean_square',
                          name='target')
-    col = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
-    for x in col:
-        tf.add_to_collection(tf.GraphKeys.VARIABLES, x)
+    # col = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
+    # for x in col:
+    #     tf.add_to_collection(tf.GraphKeys.GLOBAL_VARIABLES, x)
     return net
 
 
@@ -178,7 +178,7 @@ def forecast_model(data, model, test_sd, test_mean):
 
 def read_from_csv(sheet):
     data = pandas.read_csv(sheet)
-    return data["CLOSE"][0:5000]
+    return data["Close"]
 
 
 def run_real_time(data, model, look_back):
@@ -199,7 +199,7 @@ def generate_supervised_network(csv_file, asset):
     else:
         start = datetime.datetime(1990, 1, 1)
         end = datetime.datetime(2016, 10, 28)
-        data = web.DataReader("^GSPC", 'yahoo', start, end)
+        data = web.DataReader("^GSPC", 'google', start, end)
         df = data['Adj Close']
 
     # set batch parameters
@@ -245,7 +245,7 @@ look_ahead = 1
 should_train_network = True
 batch_size = 50
 # filepath = os.path.dirname(os.getcwd())
-csv_file = ["../data/NIFTY_sort.csv", "../data/NIFTY_F1_sort.csv"]
+csv_file = ["../data/USDBTC60.csv"]
 if __name__ == "__main__":
     for file in csv_file:
         asset = file.split("/")[-1]
